@@ -57,8 +57,14 @@ for doc in documents:
 random.shuffle(training)
 training = np.array(training)
 
-train_x = training[:, len(words)]
-train_y = training[:, len(words):]
+print("Training shape:", training.shape)
+print("Words shape:", len(words))
+
+# train_x = training[:, len(words)]
+# train_y = training[:, len(words):]
+training = np.array(training, dtype=object)
+train_x = np.array([i[0] for i in training])
+train_y = np.array([i[1] for i in training])
 
 model = tf.keras.Sequential()
 model.add(tf.keras.layers.Dense(128, input_shape=(len(train_x[0]),), activation='relu'))
