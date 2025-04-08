@@ -5,6 +5,7 @@ import numpy as np
 import tensorflow as tf
 
 import nltk
+nltk.download('punkt')
 from nltk.stem import WordNetLemmatizer
 
 lenmatizer = WordNetLemmatizer()
