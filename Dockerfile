@@ -17,5 +17,5 @@ RUN  python -m nltk.downloader -d /usr/share/nltk_data all
 COPY . .
 
 # Command to run  Chatbot.py  script
-CMD ["python", "Chatbot.py"]
+CMD ["python", "chatbot.py"]
 

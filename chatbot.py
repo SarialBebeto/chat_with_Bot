@@ -12,7 +12,7 @@ import tensorflow as tf
 import nltk
 nltk.download('punkt')
 
-lenmatizer = WordNetLemmatizer()
+lemmatizer  = WordNetLemmatizer()
 
 intents = json.loads(open('new.json').read())
 
@@ -33,11 +33,14 @@ for intent in intents['intents']:
             classes.append(intent['tag'])
 
 
-words = [lenmatizer.lemmatize(w.lower()) for w in words if w not in ignore_words]
+# words = [lemmatizer.lemmatize(w.lower()) for w in words if w not in ignore_words]
+words = [lemmatizer.lemmatize(w.lower()) for w in words]
 words = sorted(set(words))
 
-
 classes = sorted(set(classes))
+
+print("Classes:", classes)
+print("Words:", words)
 
 pickle.dump(words, open('./words.pkl', 'wb'))
 pickle.dump(classes, open('./classes.pkl', 'wb'))
@@ -48,7 +51,7 @@ output_empty = [0] * len(classes)
 for doc in documents:
     bag = []
     pattern_words = doc[0]
-    pattern_words = [lenmatizer.lemmatize(word.lower()) for word in pattern_words]
+    pattern_words = [lemmatizer.lemmatize(word.lower()) for word in pattern_words]
 
     for w in words:
         bag.append(1) if w in pattern_words else bag.append(0)
@@ -59,9 +62,10 @@ for doc in documents:
     training.append([bag, output_row])
 
 random.shuffle(training)
-training = np.array(training)
+# training = np.array(training)
 
-print("Training shape:", training.shape)
+# print("Training shape:", training.shape)
+print("Training shape:", len(training))
 print("Words shape:", len(words))
 
 training = np.array(training, dtype=object)
@@ -104,8 +108,14 @@ def bag_of_words(sentence):
         for i, w in enumerate(words):
             if w == s:
                 bag[i] = 1
+    # print(bag_of_words("Hello"))
+    # print(bag_of_words("What is black hole"))
     return np.array(bag)
 
+# print the bag of words for "Hello"
+print("Bag of words for 'Hello':", bag_of_words("Hello"))
+# print the bag of words for "What is black hole"   
+print("Bag of words for 'What is black hole':", bag_of_words("What is black hole"))
 
 def softmax(x):
     e_x = np.exp(x - np.max(x))
@@ -117,11 +127,13 @@ def predict_class(sentence):
     bow = bag_of_words(sentence)
     res = model.predict(np.array([bow]))[0]
     res = softmax(res)
-    ERROR_THRESHOLD = 0.5
+    ERROR_THRESHOLD = 0.1
     results = [
         {"intent": classes[i], "probability": str(prob)} 
                for i, prob in enumerate(res) if prob > ERROR_THRESHOLD
                ]
+    print("BOW:", bow)
+    print("Model prediction raw:", res)
 
     # sort by strength of probability
     results.sort(key=lambda x: x["probability"], reverse=True)
@@ -151,6 +163,6 @@ while True:
         break
     intent_list = predict_class(message)
     response = get_response(intent_list, intents)
-    print("Chatbot:", response)
+    print("chatbot:", response)
 
 

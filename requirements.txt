@@ -4,5 +4,7 @@ nltk
 transformers
 scikit-learn
 NumPy
-maths
-
+pandas
+sqlite3
+flask
+requests
