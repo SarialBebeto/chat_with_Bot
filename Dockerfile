@@ -16,6 +16,6 @@ RUN  python -m nltk.downloader -d /usr/share/nltk_data all
 # copy the rest of the application code into the container at /app
 COPY . .
 
-# Command to run Model.py and Chatbot.py  script
+# Command to run  Chatbot.py  script
 CMD ["python", "Chatbot.py"]
 

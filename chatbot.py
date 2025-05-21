@@ -34,7 +34,7 @@ for intent in intents['intents']:
 
 
 words = [lenmatizer.lemmatize(w.lower()) for w in words if w not in ignore_words]
-words = sorted(set(classes))
+words = sorted(set(words))
 
 
 classes = sorted(set(classes))
@@ -64,8 +64,6 @@ training = np.array(training)
 print("Training shape:", training.shape)
 print("Words shape:", len(words))
 
-# train_x = training[:, len(words)]
-# train_y = training[:, len(words):]
 training = np.array(training, dtype=object)
 train_x = np.array([np.array(i[0], dtype=np.float32) for i in training])
 train_y = np.array([np.array(i[1], dtype=np.float32) for i in training])
@@ -78,14 +76,9 @@ model.add(tf.keras.layers.Dense(len(train_y[0]), activation='softmax'))
 
 sgd = tf.keras.optimizers.SGD(learning_rate=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
-# print("Sample train_x:", train_x[:2])
-# print("Sample train_y:", train_y[:2])
-# print("train_x dtype:", train_x.dtype)
-# print("train_y dtype:", train_y.dtype)
 hist = model.fit(train_x, train_y, epochs=200, batch_size=5, verbose=1)
 model.save('./chatbot_model.keras', hist)
 print("Model created")
-
 
 
 lemmatizer = WordNetLemmatizer()
@@ -134,11 +127,7 @@ def predict_class(sentence):
     results.sort(key=lambda x: x["probability"], reverse=True)
     print("Predicted intents:", results)
     return results
-    # return_list = []
-    # for r in results:
-    #     return_list.append({"intent": classes[r[0]], "probability": str(r[1])})
-    # return return_list
-    
+
 
 def get_response(intent_list, intents_json):
     if not intent_list:
@@ -151,13 +140,7 @@ def get_response(intent_list, intents_json):
             response = random.choice(intent['responses'])
             break
     return response
-    # tag = intent_list[0]['intent']
-    # list_of_intents = intents_json['intents']
-    # for i in list_of_intents:
-    #     if i['tag'] == tag:
-    #         response = random.choice(i['responses'])
-    #         break
-    # return response
+
 
 print("Chatbot is ready to talk!")
 
